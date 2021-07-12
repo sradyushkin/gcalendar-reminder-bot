@@ -1,0 +1,1 @@
+worker: java $JAVA_OPTS -jar gcalendar-reminder-bot-1.0-jar-with-dependencies.jar $JAR_OPTS
