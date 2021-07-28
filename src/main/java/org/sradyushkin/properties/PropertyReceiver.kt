@@ -1,15 +1,23 @@
 package org.sradyushkin.properties
 
+import java.lang.RuntimeException
 import java.util.*
 
 class PropertyReceiver {
 
-    private val appProp: String = "application.properties"
-
     private val prop = Properties()
 
     fun getPropertyValue(key: String): String {
-        prop.load(PropertyReceiver::class.java.getResourceAsStream("/$appProp"))
-        return prop.getProperty(key)
+        try {
+            prop.load(PropertyReceiver::class.java.getResourceAsStream("/$APP_PROP"))
+            return prop.getProperty(key)
+        } catch (ex : Exception) {
+            ex.printStackTrace()
+            throw RuntimeException()
+        }
+    }
+
+    companion object {
+        private const val APP_PROP: String = "application.properties"
     }
 }
