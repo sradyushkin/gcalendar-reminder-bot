@@ -1,12 +1,14 @@
-package org.sradyushkin
+package org.sradyushkin.gcrb
 
+import org.sradyushkin.gcrb.properties.PropertyReceiver
+import org.sradyushkin.gcrb.schedule.EventData
+import org.sradyushkin.gcrb.schedule.EventListener
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
-import org.sradyushkin.properties.PropertyReceiver
 
-class CalendarBot : TelegramLongPollingBot() {
+class CalendarBot : TelegramLongPollingBot(), EventListener {
     private val propertyReceiver = PropertyReceiver()
 
     override fun getBotToken(): String {
@@ -47,5 +49,10 @@ class CalendarBot : TelegramLongPollingBot() {
                 e.printStackTrace();
             }
         }
+    }
+
+    override fun processUpdate(event: EventData) {
+        println("It's")
+        println(event.chatId)
     }
 }

@@ -1,4 +1,4 @@
-package org.sradyushkin.properties
+package org.sradyushkin.gcrb.properties
 
 import java.lang.RuntimeException
 import java.util.*
