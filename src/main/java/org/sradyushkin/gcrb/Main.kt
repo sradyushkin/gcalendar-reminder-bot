@@ -1,5 +1,6 @@
 package org.sradyushkin.gcrb
 
+import org.sradyushkin.gcrb.db.MigrationRunner
 import org.sradyushkin.gcrb.schedule.JobConfig
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
@@ -7,6 +8,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
 fun main() {
     try {
+        val migrationRunner = MigrationRunner()
+        migrationRunner.runMigration()
         val calendarBot = CalendarBot()
         val jobConfig = JobConfig(calendarBot)
         jobConfig.createJob()
