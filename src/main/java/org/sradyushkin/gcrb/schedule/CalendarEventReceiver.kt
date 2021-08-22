@@ -1,4 +1,4 @@
-package org.sradyushkin.gcrb
+package org.sradyushkin.gcrb.schedule
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
@@ -13,7 +13,6 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
 import kotlin.collections.ArrayList
-
 
 class CalendarEventReceiver(
     private val accessKey: String,

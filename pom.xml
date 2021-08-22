@@ -18,6 +18,8 @@
         <quartz.scheduller.version>2.3.2</quartz.scheduller.version>
         <postgres.driver.version>42.2.20</postgres.driver.version>
         <flyway.version>7.14.0</flyway.version>
+        <junit.version>4.13.2</junit.version>
+        <mockito.version>3.12.1</mockito.version>
     </properties>
 
     <dependencies>
@@ -25,13 +27,6 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-test</artifactId>
-            <version>${kotlin.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -68,6 +63,20 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
