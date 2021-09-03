@@ -1,6 +1,7 @@
 package org.sradyushkin.gcrb.dao
 
 import org.sradyushkin.gcrb.db.PgConnector
+import org.sradyushkin.gcrb.exception.CalendarBotException
 import java.sql.SQLException
 
 class AuthUserDao {
@@ -15,21 +16,24 @@ class AuthUserDao {
                 ps.execute()
             } catch (e: SQLException) {
                 e.printStackTrace()
-                throw e
+                throw CalendarBotException(null)
             }
         }
     }
 
-    fun getIdByChatId(chatId: Int): String {
+    fun getIdByChatId(chatId: String): Int {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(GET_ID_BY_CHAT_ID_QUERY)
-                ps.setInt(1, chatId)
+                ps.setString(1, chatId)
                 val rs = ps.executeQuery()
-                return rs.getString("id")
+                while (rs.next()) {
+                    return rs.getString("id").toInt()
+                }
+                throw CalendarBotException(ROW_NOT_FOUND)
             } catch (e: SQLException) {
                 e.printStackTrace()
-                throw e
+                throw CalendarBotException(null)
             }
         }
     }
@@ -37,5 +41,6 @@ class AuthUserDao {
     companion object {
         private const val SAVE_USER_DATA_QUERY = "INSERT INTO auth_user(access_key, chat_id) VALUES (?, ?);"
         private const val GET_ID_BY_CHAT_ID_QUERY = "SELECT id FROM auth_user WHERE chat_id = ?;"
+        private const val ROW_NOT_FOUND = "You need register your access key first"
     }
 }

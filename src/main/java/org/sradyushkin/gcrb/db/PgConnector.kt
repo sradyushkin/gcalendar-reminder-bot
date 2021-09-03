@@ -12,6 +12,9 @@ class PgConnector {
         val dbURI = URI(System.getenv("DATABASE_URL"))
         credentials["user"] = dbURI.userInfo.split(":")[0]
         credentials["password"] = dbURI.userInfo.split(":")[1]
-        return DriverManager.getConnection(dbURI.host, credentials)
+        return DriverManager.getConnection(
+            "jdbc:postgresql://${dbURI.host}:${dbURI.port}${dbURI.path}",
+            credentials
+        )
     }
 }

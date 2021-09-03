@@ -11,7 +11,7 @@ class CalendarDao {
             try {
                 val ps = it.prepareStatement(SAVE_CALENDAR_QUERY)
                 ps.setString(1, name)
-                ps.setInt(1, userId)
+                ps.setInt(2, userId)
                 ps.execute()
             } catch (e: SQLException) {
                 e.printStackTrace()

@@ -1,5 +1,8 @@
 package org.sradyushkin.gcrb
 
+import org.sradyushkin.gcrb.dao.AuthUserDao
+import org.sradyushkin.gcrb.dao.CalendarDao
+import org.sradyushkin.gcrb.exception.CalendarBotException
 import org.sradyushkin.gcrb.properties.PropertyReceiver
 import org.sradyushkin.gcrb.schedule.CalendarEventReceiver
 import org.sradyushkin.gcrb.schedule.EventData
@@ -11,6 +14,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
 open class CalendarBot : TelegramLongPollingBot(), EventListener {
     private val propertyReceiver = PropertyReceiver()
+    private val calendarDao = CalendarDao()
+    private val authUserDao = AuthUserDao()
 
     override fun getBotToken(): String {
         return propertyReceiver.getPropertyValue("bot.access.token")
@@ -22,7 +27,12 @@ open class CalendarBot : TelegramLongPollingBot(), EventListener {
 
     override fun onUpdateReceived(update: Update) {
         if (update.hasMessage() && update.message.hasText() && update.message.text.startsWith("/")) {
-            val replyMsg = handleMessage(update.message.text)
+            val replyMsg: String = try {
+                handleMessage(update.message.text, update.message.chatId.toString())
+            } catch (e: CalendarBotException) {
+                e.printStackTrace()
+                e.message ?: UNRECOGNIZED_ERROR_MESSAGE
+            }
             val message = SendMessage()
             message.chatId = update.message.chatId.toString()
             message.text = replyMsg
@@ -53,19 +63,20 @@ open class CalendarBot : TelegramLongPollingBot(), EventListener {
         }
     }
 
-    private fun handleMessage(message: String): String {
+    private fun handleMessage(message: String, chatId: String): String {
         val trimmedMsg = message.trim().substring(1)
         val spaceIndex = trimmedMsg.indexOf(" ", 0)
         if (spaceIndex > 0) {
             when (trimmedMsg.substring(0, spaceIndex)) {
                 CommandType.REGISTER.toString().lowercase() -> {
                     val accessKey = trimmedMsg.substring(spaceIndex + 1)
-                    //persist key to db
+                    authUserDao.saveUserData(accessKey, chatId)
                     return KEY_SAVED_MESSAGE
                 }
                 CommandType.CALENDAR.toString().lowercase() -> {
                     val calendarName = trimmedMsg.substring(spaceIndex + 1)
-                    //persist calendar to db
+                    val authUserId = authUserDao.getIdByChatId(chatId)
+                    calendarDao.saveCalendar(calendarName, authUserId)
                     return CALENDAR_SAVED_MESSAGE
                 }
             }
@@ -87,6 +98,7 @@ open class CalendarBot : TelegramLongPollingBot(), EventListener {
         const val HELP_MESSAGE = "Allows commands: /register - pass your google service account key, " +
                 "/calendar - pass calendar name to receive events"
         const val UNDEFINED_MESSAGE = "Your command isn't recognized"
+        const val UNRECOGNIZED_ERROR_MESSAGE = "An error occurred"
     }
 }
 
