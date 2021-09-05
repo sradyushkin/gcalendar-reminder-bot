@@ -4,10 +4,9 @@ import org.sradyushkin.gcrb.db.PgConnector
 import org.sradyushkin.gcrb.exception.CalendarBotException
 import java.sql.SQLException
 
-class AuthUserDao {
-    private val connector = PgConnector()
+open class AuthUserDao(private val connector: PgConnector) {
 
-    fun saveUserData(accessKey: String, chatId: String) {
+    open fun saveUserData(accessKey: String, chatId: String) {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(SAVE_USER_DATA_QUERY)
@@ -21,7 +20,7 @@ class AuthUserDao {
         }
     }
 
-    fun getIdByChatId(chatId: String): Int {
+    open fun getIdByChatId(chatId: String): Int {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(GET_ID_BY_CHAT_ID_QUERY)

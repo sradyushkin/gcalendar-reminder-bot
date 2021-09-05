@@ -3,11 +3,11 @@ package org.sradyushkin.gcrb.properties
 import java.lang.RuntimeException
 import java.util.*
 
-class PropertyReceiver {
+open class PropertyReceiver {
 
     private val prop = Properties()
 
-    fun getPropertyValue(key: String): String {
+    open fun getPropertyValue(key: String): String {
         try {
             prop.load(PropertyReceiver::class.java.getResourceAsStream("/$APP_PROP"))
             return prop.getProperty(key)

@@ -12,10 +12,11 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
-open class CalendarBot : TelegramLongPollingBot(), EventListener {
-    private val propertyReceiver = PropertyReceiver()
-    private val calendarDao = CalendarDao()
-    private val authUserDao = AuthUserDao()
+open class CalendarBot(
+    private val propertyReceiver : PropertyReceiver,
+    private val calendarDao : CalendarDao,
+    private val authUserDao : AuthUserDao
+) : TelegramLongPollingBot(), EventListener {
 
     override fun getBotToken(): String {
         return propertyReceiver.getPropertyValue("bot.access.token")

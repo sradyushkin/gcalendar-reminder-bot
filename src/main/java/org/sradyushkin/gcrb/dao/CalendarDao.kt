@@ -3,10 +3,9 @@ package org.sradyushkin.gcrb.dao
 import org.sradyushkin.gcrb.db.PgConnector
 import java.sql.SQLException
 
-class CalendarDao {
-    private val connector = PgConnector()
+open class CalendarDao(private val connector: PgConnector) {
 
-    fun saveCalendar(name: String, userId: Int) {
+    open fun saveCalendar(name: String, userId: Int) {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(SAVE_CALENDAR_QUERY)

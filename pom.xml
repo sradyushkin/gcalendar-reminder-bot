@@ -20,6 +20,7 @@
         <flyway.version>7.14.0</flyway.version>
         <junit.version>4.13.2</junit.version>
         <mockito.version>3.12.1</mockito.version>
+        <apache.commons.version>3.12.0</apache.commons.version>
     </properties>
 
     <dependencies>
@@ -83,6 +84,12 @@
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.commons.version}</version>
         </dependency>
     </dependencies>
 
