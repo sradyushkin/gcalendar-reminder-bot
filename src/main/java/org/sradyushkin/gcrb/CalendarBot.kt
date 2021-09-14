@@ -70,7 +70,7 @@ open class CalendarBot(
         if (spaceIndex > 0) {
             when (trimmedMsg.substring(0, spaceIndex)) {
                 CommandType.REGISTER.toString().lowercase() -> {
-                    val accessKey = trimmedMsg.substring(spaceIndex + 1)
+                    val accessKey = trimmedMsg.substring(spaceIndex + 1).replace("\n", "")
                     authUserDao.saveUserData(accessKey, chatId)
                     return KEY_SAVED_MESSAGE
                 }
@@ -89,8 +89,15 @@ open class CalendarBot(
     }
 
     override fun processUpdate(event: EventData) {
-        println("It's")
-        println(event.chatId)
+        val message = SendMessage()
+        message.chatId = event.chatId
+        message.text = NEW_EVENT_MESSAGE + event.calendarName + "\n${event.text}"
+
+        try {
+            execute(message)
+        } catch (e: TelegramApiException) {
+            e.printStackTrace()
+        }
     }
 
     companion object {
@@ -100,6 +107,7 @@ open class CalendarBot(
                 "/calendar - pass calendar name to receive events"
         const val UNDEFINED_MESSAGE = "Your command isn't recognized"
         const val UNRECOGNIZED_ERROR_MESSAGE = "An error occurred"
+        const val NEW_EVENT_MESSAGE = "You have new event from calendar: "
     }
 }
 

@@ -7,12 +7,11 @@ import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.calendar.model.Events
-import java.io.FileInputStream
+import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import java.util.*
-import kotlin.collections.ArrayList
 
 class CalendarEventReceiver(
     private val accessKey: String,
@@ -32,7 +31,7 @@ class CalendarEventReceiver(
     private fun receiveEvents(): Events? {
         val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
         val jacksonFactory = GsonFactory.getDefaultInstance()
-        val credential = GoogleCredential.fromStream(FileInputStream(accessKey))
+        val credential = GoogleCredential.fromStream(ByteArrayInputStream(accessKey.toByteArray()))
             .createScoped(listOf(CalendarScopes.CALENDAR_READONLY))
 
         val startOfDate = toDate(LocalDateTime.now().with(LocalTime.MIN))

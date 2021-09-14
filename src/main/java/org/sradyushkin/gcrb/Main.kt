@@ -14,8 +14,11 @@ fun main() {
     try {
         MigrationRunner.runMigration()
         val connector = PgConnector()
-        val calendarBot = CalendarBot(PropertyReceiver(), CalendarDao(connector), AuthUserDao(connector))
-        val jobConfig = JobConfig(calendarBot)
+        val calendarDao = CalendarDao(connector)
+        val authUserDao = AuthUserDao(connector)
+        val propertyReceiver = PropertyReceiver()
+        val calendarBot = CalendarBot(propertyReceiver, calendarDao, authUserDao)
+        val jobConfig = JobConfig(calendarBot, calendarDao, propertyReceiver)
         jobConfig.createJob()
         val botsApi = TelegramBotsApi(DefaultBotSession::class.java)
         botsApi.registerBot(calendarBot)
