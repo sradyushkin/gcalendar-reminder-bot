@@ -1,10 +1,11 @@
 package org.sradyushkin.gcrb
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.sradyushkin.gcrb.dao.AuthUserDao
 import org.sradyushkin.gcrb.dao.CalendarDao
 import org.sradyushkin.gcrb.exception.CalendarBotException
 import org.sradyushkin.gcrb.properties.PropertyReceiver
-import org.sradyushkin.gcrb.schedule.CalendarEventReceiver
 import org.sradyushkin.gcrb.schedule.EventData
 import org.sradyushkin.gcrb.schedule.EventListener
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
@@ -17,6 +18,8 @@ open class CalendarBot(
     private val calendarDao : CalendarDao,
     private val authUserDao : AuthUserDao
 ) : TelegramLongPollingBot(), EventListener {
+
+    private val log: Logger = LoggerFactory.getLogger(CalendarBot::class.java)
 
     override fun getBotToken(): String {
         return propertyReceiver.getPropertyValue("bot.access.token")
@@ -31,7 +34,7 @@ open class CalendarBot(
             val replyMsg: String = try {
                 handleMessage(update.message.text, update.message.chatId.toString())
             } catch (e: CalendarBotException) {
-                e.printStackTrace()
+                log.error("Input message handle error", e)
                 e.message ?: UNRECOGNIZED_ERROR_MESSAGE
             }
             val message = SendMessage()
@@ -41,25 +44,7 @@ open class CalendarBot(
             try {
                 execute(message)
             } catch (e: TelegramApiException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun executeSendingMessages(message: SendMessage, update: Update) {
-        val eventReceiver = CalendarEventReceiver(
-            "/home/sergey/Downloads/key.json",
-            "smitty90me@gmail.com"
-        )
-
-        eventReceiver.getEvents().forEach {
-            message.chatId = update.message.chatId.toString()
-            message.text = it
-
-            try {
-                execute(message)
-            } catch (e: TelegramApiException) {
-                e.printStackTrace()
+                log.error("Send message to receiver error", e)
             }
         }
     }
@@ -94,9 +79,10 @@ open class CalendarBot(
         message.text = NEW_EVENT_MESSAGE + event.calendarName + "\n${event.text}"
 
         try {
+            log.info("Attempt to send event. ChatId - ${message.chatId}")
             execute(message)
         } catch (e: TelegramApiException) {
-            e.printStackTrace()
+            log.error("Send message to receiver error", e)
         }
     }
 

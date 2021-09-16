@@ -1,10 +1,14 @@
 package org.sradyushkin.gcrb.dao
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.sradyushkin.gcrb.db.PgConnector
 import org.sradyushkin.gcrb.exception.CalendarBotException
 import java.sql.SQLException
 
 open class AuthUserDao(private val connector: PgConnector) {
+
+    private val log: Logger = LoggerFactory.getLogger(AuthUserDao::class.java)
 
     open fun saveUserData(accessKey: String, chatId: String) {
         connector.getConnection().use {
@@ -14,7 +18,7 @@ open class AuthUserDao(private val connector: PgConnector) {
                 ps.setString(2, chatId)
                 ps.execute()
             } catch (e: SQLException) {
-                e.printStackTrace()
+                log.error("Save user's access key error", e)
                 throw CalendarBotException(null)
             }
         }
@@ -31,7 +35,7 @@ open class AuthUserDao(private val connector: PgConnector) {
                 }
                 throw CalendarBotException(ROW_NOT_FOUND)
             } catch (e: SQLException) {
-                e.printStackTrace()
+                log.error("Receive id error", e)
                 throw CalendarBotException(null)
             }
         }

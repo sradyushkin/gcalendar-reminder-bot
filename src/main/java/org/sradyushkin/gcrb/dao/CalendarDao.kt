@@ -1,10 +1,14 @@
 package org.sradyushkin.gcrb.dao
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.sradyushkin.gcrb.dao.dto.CalendarData
 import org.sradyushkin.gcrb.db.PgConnector
 import java.sql.SQLException
 
 open class CalendarDao(private val connector: PgConnector) {
+
+    private val log: Logger = LoggerFactory.getLogger(CalendarDao::class.java)
 
     open fun saveCalendar(name: String, userId: Int) {
         connector.getConnection().use {
@@ -14,7 +18,7 @@ open class CalendarDao(private val connector: PgConnector) {
                 ps.setInt(2, userId)
                 ps.execute()
             } catch (e: SQLException) {
-                e.printStackTrace()
+                log.error("Save user's calendar error", e)
                 throw e
             }
         }
@@ -36,7 +40,7 @@ open class CalendarDao(private val connector: PgConnector) {
                 }
                 return dataList
             } catch (e: SQLException) {
-                e.printStackTrace()
+                log.error("Receive all calendars info error", e)
                 throw e
             }
         }

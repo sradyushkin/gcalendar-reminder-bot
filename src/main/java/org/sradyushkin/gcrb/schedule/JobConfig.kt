@@ -13,7 +13,6 @@ class JobConfig(
     private val calendarDao: CalendarDao,
     private val propertyReceiver: PropertyReceiver
 ) {
-
     fun createJob() {
         val jobDataMap = JobDataMap()
         jobDataMap["eventListener"] = eventListener

@@ -7,6 +7,8 @@ import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.calendar.model.Events
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -17,6 +19,8 @@ class CalendarEventReceiver(
     private val accessKey: String,
     private val calendarId: String
 ) {
+
+    private val log: Logger = LoggerFactory.getLogger(CalendarEventReceiver::class.java)
 
     fun getEvents(): List<String> {
         val events = receiveEvents()
@@ -44,8 +48,8 @@ class CalendarEventReceiver(
                 .setTimeMin(DateTime(startOfDate))
                 .setTimeMax(DateTime(endOfDate))
                 .execute()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (e: Exception) {
+            log.error("Receive event data from google api error. CalendarId - $calendarId", e)
         }
         return null
     }
