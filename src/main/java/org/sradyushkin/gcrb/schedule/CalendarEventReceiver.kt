@@ -23,9 +23,12 @@ class CalendarEventReceiver(
     private val log: Logger = LoggerFactory.getLogger(CalendarEventReceiver::class.java)
 
     fun getEvents(): List<String> {
+        log.info("Attempt to receive events from google api. CalendarId - $calendarId")
         val events = receiveEvents()
         if (events != null) {
-            val items = ArrayList<String>(events.items?.size ?: 0)
+            val eventSize = events.items?.size ?: 0
+            log.info("Attempt was successfully. Received - $eventSize events")
+            val items = ArrayList<String>(eventSize)
             events.items?.forEach { items.add(it.summary) }
             return items.filter { true }
         }
