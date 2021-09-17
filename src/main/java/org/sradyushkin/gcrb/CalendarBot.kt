@@ -67,7 +67,9 @@ open class CalendarBot(
                 }
             }
         }
-        if (CommandType.HELP.toString().lowercase() == trimmedMsg) {
+        if (CommandType.HELP.toString().lowercase() == trimmedMsg
+            || CommandType.START.toString().lowercase() == trimmedMsg
+        ) {
             return HELP_MESSAGE
         }
         return UNDEFINED_MESSAGE
@@ -90,8 +92,8 @@ open class CalendarBot(
     companion object {
         const val KEY_SAVED_MESSAGE: String = "Your access key has been successfully saved!"
         const val CALENDAR_SAVED_MESSAGE: String = "Your calendar has been successfully saved!"
-        const val HELP_MESSAGE = "Allows commands: /register - pass your google service account key, " +
-                "/calendar - pass calendar name to receive events"
+        const val HELP_MESSAGE = "Allows commands: \n/register - pass your google service account key " +
+                "\n/calendar - pass calendar name to receive events"
         const val UNDEFINED_MESSAGE = "Your command isn't recognized"
         const val UNRECOGNIZED_ERROR_MESSAGE = "An error occurred"
         const val NEW_EVENT_MESSAGE = "You have new event from calendar: "
@@ -99,5 +101,5 @@ open class CalendarBot(
 }
 
 enum class CommandType {
-    REGISTER, CALENDAR, HELP
+    REGISTER, CALENDAR, HELP, START
 }
