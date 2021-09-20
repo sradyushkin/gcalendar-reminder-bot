@@ -10,7 +10,7 @@ open class AuthUserDao(private val connector: PgConnector) {
 
     private val log: Logger = LoggerFactory.getLogger(AuthUserDao::class.java)
 
-    open fun saveUserData(accessKey: String, chatId: String) {
+    open fun save(accessKey: String, chatId: String) {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(SAVE_USER_DATA_QUERY)
@@ -41,9 +41,23 @@ open class AuthUserDao(private val connector: PgConnector) {
         }
     }
 
+    fun deleteByChatId(chatId: String) {
+        connector.getConnection().use {
+            try {
+                val ps = it.prepareStatement(DELETE_BY_CHAT_ID_QUERY)
+                ps.setString(1, chatId)
+                ps.execute()
+            } catch (e: SQLException) {
+                log.error("Delete auth user info error", e)
+                throw CalendarBotException(null)
+            }
+        }
+    }
+
     companion object {
         private const val SAVE_USER_DATA_QUERY = "INSERT INTO auth_user(access_key, chat_id) VALUES (?, ?);"
         private const val GET_ID_BY_CHAT_ID_QUERY = "SELECT id FROM auth_user WHERE chat_id = ?;"
+        private const val DELETE_BY_CHAT_ID_QUERY = "DELETE FROM auth_user WHERE chat_id = ?;"
         private const val ROW_NOT_FOUND = "You need register your access key first"
     }
 }

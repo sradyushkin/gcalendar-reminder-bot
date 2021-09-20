@@ -14,9 +14,9 @@ import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException
 
 open class CalendarBot(
-    private val propertyReceiver : PropertyReceiver,
-    private val calendarDao : CalendarDao,
-    private val authUserDao : AuthUserDao
+    private val propertyReceiver: PropertyReceiver,
+    private val calendarDao: CalendarDao,
+    private val authUserDao: AuthUserDao
 ) : TelegramLongPollingBot(), EventListener {
 
     private val log: Logger = LoggerFactory.getLogger(CalendarBot::class.java)
@@ -56,23 +56,36 @@ open class CalendarBot(
             when (trimmedMsg.substring(0, spaceIndex)) {
                 CommandType.REGISTER.toString().lowercase() -> {
                     val accessKey = trimmedMsg.substring(spaceIndex + 1).replace("\n", "")
-                    authUserDao.saveUserData(accessKey, chatId)
+                    authUserDao.save(accessKey, chatId)
                     return KEY_SAVED_MESSAGE
                 }
                 CommandType.CALENDAR.toString().lowercase() -> {
                     val calendarName = trimmedMsg.substring(spaceIndex + 1)
                     val authUserId = authUserDao.getIdByChatId(chatId)
-                    calendarDao.saveCalendar(calendarName, authUserId)
+                    calendarDao.save(calendarName, authUserId)
                     return CALENDAR_SAVED_MESSAGE
+                }
+                CommandType.DELETE.toString().lowercase() -> {
+                    val calendarName = trimmedMsg.substring(spaceIndex + 1)
+                    val authUserId = authUserDao.getIdByChatId(chatId)
+                    if (calendarDao.existByNameAndAuthUserId(calendarName, authUserId)) {
+                        calendarDao.deleteByNameAndAuthUserId(calendarName, authUserId)
+                        return CALENDAR_DELETED_MESSAGE
+                    }
+                    throw CalendarBotException(CALENDAR_NOT_FOUND_MESSAGE)
                 }
             }
         }
-        if (CommandType.HELP.toString().lowercase() == trimmedMsg
-            || CommandType.START.toString().lowercase() == trimmedMsg
-        ) {
-            return HELP_MESSAGE
+        return when (trimmedMsg) {
+            CommandType.UNREGISTER.toString().lowercase() -> {
+                authUserDao.deleteByChatId(chatId)
+                ALL_USER_INFO_REMOVED_MESSAGE
+            }
+            CommandType.HELP.toString().lowercase(), CommandType.START.toString().lowercase() -> {
+                HELP_MESSAGE
+            }
+            else -> UNDEFINED_MESSAGE
         }
-        return UNDEFINED_MESSAGE
     }
 
     override fun processUpdate(event: EventData) {
@@ -92,14 +105,18 @@ open class CalendarBot(
     companion object {
         const val KEY_SAVED_MESSAGE: String = "Your access key has been successfully saved!"
         const val CALENDAR_SAVED_MESSAGE: String = "Your calendar has been successfully saved!"
+        const val ALL_USER_INFO_REMOVED_MESSAGE = "Your access key and all calendars were deleted!"
         const val HELP_MESSAGE = "Allows commands: \n/register - pass your google service account key " +
-                "\n/calendar - pass calendar name to receive events"
+                "\n/calendar - pass calendar name to receive events\n/unregister - for delete all user's data like " +
+                "calendars and access key\n/delete - pass calendar name for remove"
         const val UNDEFINED_MESSAGE = "Your command isn't recognized"
         const val UNRECOGNIZED_ERROR_MESSAGE = "An error occurred"
         const val NEW_EVENT_MESSAGE = "You have new event from calendar: "
+        const val CALENDAR_NOT_FOUND_MESSAGE = "That calendar wasn't found"
+        const val CALENDAR_DELETED_MESSAGE = "That calendar successfully deleted!"
     }
 }
 
 enum class CommandType {
-    REGISTER, CALENDAR, HELP, START
+    REGISTER, UNREGISTER, CALENDAR, DELETE, HELP, START
 }

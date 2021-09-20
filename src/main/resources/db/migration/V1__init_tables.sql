@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS calendar
     name         VARCHAR(200) NOT NULL,
     auth_user_id INT          NOT NULL,
     FOREIGN KEY (auth_user_id)
-        REFERENCES auth_user (id)
+        REFERENCES auth_user (id) ON DELETE CASCADE
 );

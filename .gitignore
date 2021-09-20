@@ -2,4 +2,6 @@
 target
 *.iml
 *.log
-resources/application.properties
+*.gz
+*.tmp
+src/main/resources/application.properties
