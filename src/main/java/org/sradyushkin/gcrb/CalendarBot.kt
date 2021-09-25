@@ -56,6 +56,9 @@ open class CalendarBot(
             when (trimmedMsg.substring(0, spaceIndex)) {
                 CommandType.REGISTER.toString().lowercase() -> {
                     val accessKey = trimmedMsg.substring(spaceIndex + 1).replace("\n", "")
+                    if (accessKey.length < 2000) {
+                        throw CalendarBotException(ACCESS_KEY_SHORT_MESSAGE)
+                    }
                     authUserDao.save(accessKey, chatId)
                     return KEY_SAVED_MESSAGE
                 }
@@ -103,8 +106,8 @@ open class CalendarBot(
     }
 
     companion object {
-        const val KEY_SAVED_MESSAGE: String = "Your access key has been successfully saved!"
-        const val CALENDAR_SAVED_MESSAGE: String = "Your calendar has been successfully saved!"
+        const val KEY_SAVED_MESSAGE = "Your access key has been successfully saved!"
+        const val CALENDAR_SAVED_MESSAGE = "Your calendar has been successfully saved!"
         const val ALL_USER_INFO_REMOVED_MESSAGE = "Your access key and all calendars were deleted!"
         const val HELP_MESSAGE = "Allows commands: \n/register - pass your google service account key " +
                 "\n/calendar - pass calendar name to receive events\n/unregister - for delete all user's data like " +
@@ -114,6 +117,7 @@ open class CalendarBot(
         const val NEW_EVENT_MESSAGE = "You have new event from calendar: "
         const val CALENDAR_NOT_FOUND_MESSAGE = "That calendar wasn't found"
         const val CALENDAR_DELETED_MESSAGE = "That calendar successfully deleted!"
+        const val ACCESS_KEY_SHORT_MESSAGE = "It doesn't look like access key"
     }
 }
 

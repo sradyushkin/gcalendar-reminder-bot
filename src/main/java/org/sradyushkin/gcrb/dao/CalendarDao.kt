@@ -47,7 +47,7 @@ open class CalendarDao(private val connector: PgConnector) {
         }
     }
 
-    fun existByNameAndAuthUserId(name: String, authUserId: Int): Boolean {
+    open fun existByNameAndAuthUserId(name: String, authUserId: Int): Boolean {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(GET_BY_NAME_AND_USER_ID_QUERY)
@@ -62,7 +62,7 @@ open class CalendarDao(private val connector: PgConnector) {
         }
     }
 
-    fun deleteByNameAndAuthUserId(name: String, authUserId: Int) {
+    open fun deleteByNameAndAuthUserId(name: String, authUserId: Int) {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(DELETE_BY_NAME_AND_USER_ID_QUERY)

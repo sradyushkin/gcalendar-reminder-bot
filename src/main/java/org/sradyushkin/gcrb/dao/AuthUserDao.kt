@@ -41,7 +41,7 @@ open class AuthUserDao(private val connector: PgConnector) {
         }
     }
 
-    fun deleteByChatId(chatId: String) {
+   open fun deleteByChatId(chatId: String) {
         connector.getConnection().use {
             try {
                 val ps = it.prepareStatement(DELETE_BY_CHAT_ID_QUERY)
