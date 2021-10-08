@@ -8,7 +8,7 @@ class CalendarEventReceiverJob : Job {
     override fun execute(context: JobExecutionContext?) {
         val jobDataMap = context?.jobDetail?.jobDataMap
         if (jobDataMap != null) {
-            if (jobDataMap.containsKey("eventListener")) {
+            if (jobDataMap.containsKey("eventListener") && jobDataMap.containsKey("calendarDao")) {
                 val eventListener = jobDataMap["eventListener"] as EventListener
                 val calendarDao = jobDataMap["calendarDao"] as CalendarDao
                 val calendars = calendarDao.getAllCalendars()
