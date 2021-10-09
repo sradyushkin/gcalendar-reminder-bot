@@ -1,4 +1,4 @@
-Telegram bot for receive events from google calendar api. All events send at 9.00 PM MSK every day.
+Telegram bot @gcalendar_reminder_bot for receive events from google calendar api. All events send at 9.00 PM MSK every day.
 ***
 **Usage:**
 
