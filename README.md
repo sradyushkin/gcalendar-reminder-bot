@@ -7,6 +7,6 @@ Telegram bot @gcalendar_reminder_bot for receive events from google calendar api
    this [link](https://cloud.google.com/iam/docs/creating-managing-service-accounts).
 2) **/calendar** - need to pass calendar id which you want to subscribe for receive events.
    Service account must have access to this calendar. It's maybe greater than one.
-3) **/delete** - need to pass some calendar name for unsubscribe.
+3) **/delete** - need to pass some calendar id for unsubscribe.
 4) **/unregister** - for delete all user's data like calendars and access key.
 5) **/help** - for help message.
