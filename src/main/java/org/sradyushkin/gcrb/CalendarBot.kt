@@ -94,7 +94,7 @@ open class CalendarBot(
     override fun processUpdate(event: EventData) {
         val message = SendMessage()
         message.chatId = event.chatId
-        message.text = NEW_EVENT_MESSAGE + "<b>${event.calendarName}</b>" + "\n<b>${event.text}</b>"
+        message.text = NEW_EVENT_MESSAGE + "<b>${event.item.calendarName}</b>" + "\n<b>${event.item.text}</b>"
         message.enableHtml(true)
 
         try {
