@@ -1,5 +1,5 @@
 package org.sradyushkin.gcrb.schedule
 
 interface EventListener {
-    fun processUpdate(event: EventData)
+    fun processUpdate(event: Event)
 }

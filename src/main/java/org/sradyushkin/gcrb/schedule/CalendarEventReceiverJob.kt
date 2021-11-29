@@ -18,7 +18,7 @@ class CalendarEventReceiverJob : Job {
                         map.value.forEach { calendar ->
                             val eventReceiver = CalendarEventReceiver(calendar.accessKey, calendar.name)
                             eventReceiver.getEvents().forEach {
-                                eventListener.processUpdate(EventData(map.key, it))
+                                eventListener.processUpdate(Event(map.key, it))
                             }
                         }
                     }

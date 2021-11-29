@@ -10,6 +10,7 @@ import com.google.api.services.calendar.model.Events
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.ByteArrayInputStream
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
@@ -22,15 +23,26 @@ class CalendarEventReceiver(
 
     private val log: Logger = LoggerFactory.getLogger(CalendarEventReceiver::class.java)
 
-    fun getEvents(): List<ItemInfo> {
+    fun getEvents(): List<EventData> {
         log.info("Attempt to receive events from google api. CalendarId - $calendarId")
         val events = receiveEvents()
         if (events != null) {
             val eventSize = events.items?.size ?: 0
             log.info("Attempt was successfully. Received - $eventSize events")
-            val items = ArrayList<ItemInfo>(eventSize)
-            events.items?.forEach { items.add(ItemInfo(it.summary, events.summary)) }
-            return items.filter { i -> i.text != null && i.calendarName != null }
+            val items = ArrayList<EventData>(eventSize)
+            events.items?.forEach {
+                items.add(
+                    EventData(
+                        it.summary,
+                        events.summary,
+                        if (it.start != null) toLocalDateTime(it.start.dateTime) else null,
+                        if (it.end != null) toLocalDateTime(it.end.dateTime) else null,
+                        it.location,
+                        it.description
+                    )
+                )
+            }
+            return items.filter { i -> i.header != null && i.calendarName != null }
         }
         return emptyList()
     }
@@ -59,5 +71,12 @@ class CalendarEventReceiver(
 
     private fun toDate(date: LocalDateTime): Date {
         return Date.from(date.atZone(ZoneId.systemDefault()).toInstant())
+    }
+
+    private fun toLocalDateTime(date: DateTime?): LocalDateTime? {
+        if (date == null) {
+            return null
+        }
+        return Instant.ofEpochMilli(date.value).atZone(ZoneId.systemDefault()).toLocalDateTime()
     }
 }

@@ -6,7 +6,7 @@ import org.sradyushkin.gcrb.dao.AuthUserDao
 import org.sradyushkin.gcrb.dao.CalendarDao
 import org.sradyushkin.gcrb.exception.CalendarBotException
 import org.sradyushkin.gcrb.properties.PropertyReceiver
-import org.sradyushkin.gcrb.schedule.EventData
+import org.sradyushkin.gcrb.schedule.Event
 import org.sradyushkin.gcrb.schedule.EventListener
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
@@ -91,10 +91,10 @@ open class CalendarBot(
         }
     }
 
-    override fun processUpdate(event: EventData) {
+    override fun processUpdate(event: Event) {
         val message = SendMessage()
         message.chatId = event.chatId
-        message.text = NEW_EVENT_MESSAGE + "<b>${event.item.calendarName}</b>" + "\n<b>${event.item.text}</b>"
+        message.text = prepareMessageText(event)
         message.enableHtml(true)
 
         try {
@@ -103,6 +103,21 @@ open class CalendarBot(
         } catch (e: TelegramApiException) {
             log.error("Send message to receiver error", e)
         }
+    }
+
+    private fun prepareMessageText(event: Event): String {
+        val sb = StringBuilder()
+        sb.append(NEW_EVENT_MESSAGE + "<b>${event.data.calendarName}</b>" + "\n<b>${event.data.header}</b>")
+        if (event.data.start != null && event.data.end != null) {
+            sb.append("\n<b>From: </b>${event.data.start.toLocalTime()} <b>To: </b>${event.data.end.toLocalTime()}")
+        }
+        if (event.data.location != null) {
+            sb.append("\n<b>Location: </b>${event.data.location}")
+        }
+        if (event.data.description != null) {
+            sb.append("\n<b>Description: </b>${event.data.description}")
+        }
+        return sb.toString()
     }
 
     companion object {
